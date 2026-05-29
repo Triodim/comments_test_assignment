@@ -6,7 +6,7 @@
     <div class="flex gap-2">
       <input type="text" name="q" value="<%= params[:q] %>"
              placeholder="Search comments..."
-             class="flex-1 rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+             class="flex-1 rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:border-indigo-500">
       <button type="submit"
               class="bg-indigo-600 text-white px-4 py-2 rounded-md text-sm hover:bg-indigo-700">Search</button>
       <% if params[:q].present? %>
