@@ -1,6 +1,6 @@
 <%= turbo_frame_tag "comment-#{@comment.id}" do %>
   <div id="comment-<%= @comment.id %>"
-       data-controller="highlight"
+       data-controller="highlight<%= ' expand' if @comment.root? && signed_in? && has_children? %>"
        class="bg-white rounded-lg border border-gray-200 transition-all duration-500 ease-out <%= indent_class %>">
     <div class="p-4">
       <%# Comment header %>
@@ -9,13 +9,19 @@
           <span class="text-sm font-semibold text-gray-800"><%= @comment.user.username %></span>
           <span class="text-xs text-gray-400"><%= time_ago_in_words(@comment.created_at) %> ago</span>
         </div>
-        <% if owner? %>
+        <% if owner? || (@comment.root? && signed_in? && has_children?) %>
           <div class="flex items-center gap-3">
-            <%= link_to "Edit", edit_comment_path(@comment),
-                  class: "text-xs text-indigo-600 hover:underline" %>
-            <%= link_to "Delete", comment_path(@comment),
-                  data: { turbo_method: :delete, turbo_confirm: "Delete this comment and all its replies?" },
-                  class: "text-xs text-red-500 hover:underline" %>
+            <% if owner? %>
+              <%= link_to "Edit", edit_comment_path(@comment),
+                    class: "text-xs text-indigo-600 hover:underline" %>
+              <%= link_to "Delete", comment_path(@comment),
+                    data: { turbo_method: :delete, turbo_confirm: "Delete this comment and all its replies?" },
+                    class: "text-xs text-red-500 hover:underline" %>
+            <% end %>
+            <% if @comment.root? && signed_in? && has_children? %>
+              <button data-action="expand#toggle" data-expand-target="btn"
+                      class="text-xs text-gray-400 hover:text-gray-600 hover:underline">Collapse</button>
+            <% end %>
           </div>
         <% end %>
       </div>
@@ -31,7 +37,9 @@
 
     <%# Children %>
     <% if signed_in? %>
-      <div id="children-comment-<%= @comment.id %>" class="px-4 pb-4">
+      <div id="children-comment-<%= @comment.id %>"
+           data-expand-target="children"
+           class="px-4 pb-4">
         <% @comment.children.each do |child| %>
           <%= render(CommentComponent.new(comment: child, current_user: @current_user)) %>
         <% end %>

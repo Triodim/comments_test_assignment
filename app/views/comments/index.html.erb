@@ -29,6 +29,15 @@
   <% end %>
 </div>
 
+<% if user_signed_in? %>
+  <div data-controller="feed" class="shrink-0 flex items-center justify-end gap-3 pb-2">
+    <button data-action="feed#expandAll"
+            class="text-xs text-gray-400 hover:text-gray-600 hover:underline">Expand all</button>
+    <button data-action="feed#collapseAll"
+            class="text-xs text-gray-400 hover:text-gray-600 hover:underline">Collapse all</button>
+  </div>
+<% end %>
+
 <%# Scrollable comments feed only %>
 <div id="comments-list" class="flex-1 overflow-y-auto flex flex-col gap-4 pr-1">
   <% if params[:q].present? %>

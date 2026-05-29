@@ -29,4 +29,8 @@ class CommentComponent < ApplicationComponent
   def reply_count_label
     reply_count == 1 ? '1 reply' : "#{reply_count} replies"
   end
+
+  def has_children?
+    reply_count > 0
+  end
 end
