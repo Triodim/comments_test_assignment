@@ -40,8 +40,8 @@
       <div id="children-comment-<%= @comment.id %>"
            data-expand-target="children"
            class="px-4 pb-4">
-        <% @comment.children.each do |child| %>
-          <%= render(CommentComponent.new(comment: child, current_user: @current_user)) %>
+        <% children.each do |child| %>
+          <%= render(CommentComponent.new(comment: child, current_user: @current_user, children_map: @children_map)) %>
         <% end %>
       </div>
     <% elsif reply_count > 0 %>

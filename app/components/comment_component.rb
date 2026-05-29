@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
 class CommentComponent < ApplicationComponent
-  def initialize(comment:, current_user: nil)
-    @comment = comment
+  def initialize(comment:, current_user: nil, children_map: {})
+    @comment      = comment
     @current_user = current_user
+    @children_map = children_map
   end
 
   def owner?
@@ -22,8 +23,12 @@ class CommentComponent < ApplicationComponent
     @comment.depth > 0 ? 'ml-6 mt-2' : ''
   end
 
+  def children
+    @children_map[@comment.id] || []
+  end
+
   def reply_count
-    @reply_count ||= @comment.children.count
+    @reply_count ||= children.size
   end
 
   def reply_count_label

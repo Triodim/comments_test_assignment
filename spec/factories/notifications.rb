@@ -1,8 +1,14 @@
+# frozen_string_literal: true
+
 FactoryBot.define do
   factory :notification do
-    user { nil }
-    actor_id { "" }
-    comment { nil }
+    association :user
+    association :actor, factory: :user
+    association :comment
     read { false }
+
+    trait :read do
+      read { true }
+    end
   end
 end

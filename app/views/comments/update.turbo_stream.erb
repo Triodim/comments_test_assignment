@@ -1,6 +1,6 @@
 <% if @success %>
   <%= turbo_stream.replace "comment-#{@comment.id}" do %>
-    <%= render(CommentComponent.new(comment: @comment, current_user: current_user)) %>
+    <%= render(CommentComponent.new(comment: @comment, current_user: current_user, children_map: @children_map)) %>
   <% end %>
 <% else %>
   <%= turbo_stream.replace "comment-#{@comment.id}" do %>

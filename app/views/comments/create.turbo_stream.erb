@@ -1,8 +1,8 @@
 <% if @success %>
   <% if @comment.root? %>
-    <%# Prepend new root comment to top of list %>
+    <%# Prepend new root comment — no children yet so children_map is empty %>
     <%= turbo_stream.prepend "comments-list" do %>
-      <%= render(CommentComponent.new(comment: @comment, current_user: current_user)) %>
+      <%= render(CommentComponent.new(comment: @comment, current_user: current_user, children_map: {})) %>
     <% end %>
     <%# Reset the new-comment form %>
     <%= turbo_stream.replace "new-comment-form" do %>
@@ -14,7 +14,7 @@
   <% else %>
     <%# Append reply into parent's children container %>
     <%= turbo_stream.append "children-comment-#{@comment.parent_id}" do %>
-      <%= render(CommentComponent.new(comment: @comment, current_user: current_user)) %>
+      <%= render(CommentComponent.new(comment: @comment, current_user: current_user, children_map: {})) %>
     <% end %>
     <%# Reset and hide the reply form %>
     <%= turbo_stream.replace "reply-form-comment-#{@comment.parent_id}" do %>

@@ -1,0 +1,20 @@
+<%# Insert each new comment immediately before the sentinel, keeping sentinel at bottom %>
+<% @comments.each do |comment| %>
+  <%= turbo_stream.before "feed-sentinel" do %>
+    <%= render(CommentComponent.new(comment: comment, current_user: current_user, children_map: @children_map)) %>
+  <% end %>
+<% end %>
+
+<%# Update sentinel with new cursor, or remove it on the last page %>
+<% if @next_cursor %>
+  <%= turbo_stream.replace "feed-sentinel" do %>
+    <div id="feed-sentinel"
+         data-controller="infinite-scroll"
+         data-infinite-scroll-url-value="<%= comments_path(cursor: @next_cursor, format: :turbo_stream) %>"
+         class="py-6 flex justify-center">
+      <span class="text-xs text-gray-300">Loading more…</span>
+    </div>
+  <% end %>
+<% else %>
+  <%= turbo_stream.remove "feed-sentinel" %>
+<% end %>
