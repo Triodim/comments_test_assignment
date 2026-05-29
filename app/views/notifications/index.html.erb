@@ -1,0 +1,30 @@
+<div class="flex items-center justify-between mb-6">
+  <h1 class="text-lg font-semibold text-gray-900">Notifications</h1>
+  <% if @notifications.any?(&:read.is_a?(FalseClass)) || @notifications.unread.any? %>
+    <%= button_to "Mark all as read", mark_all_as_read_notifications_path, method: :patch,
+          class: "text-xs text-indigo-600 hover:underline bg-transparent border-0 cursor-pointer" %>
+  <% end %>
+</div>
+
+<% if @notifications.empty? %>
+  <p class="text-gray-500 text-sm">No notifications yet.</p>
+<% else %>
+  <div class="flex flex-col gap-2" id="notifications-list">
+    <% @notifications.each do |notification| %>
+      <div id="notification-<%= notification.id %>"
+           class="bg-white rounded-lg border <%= notification.read? ? 'border-gray-200' : 'border-indigo-200 bg-indigo-50' %> p-4 flex items-center justify-between gap-4">
+        <div class="flex-1">
+          <%= link_to comments_path(anchor: "comment-#{notification.comment_id}"),
+                class: "text-sm #{notification.read? ? 'text-gray-600' : 'text-indigo-800 font-medium'} hover:underline" do %>
+            <strong><%= notification.actor.username %></strong> mentioned you in a comment
+          <% end %>
+          <p class="text-xs text-gray-400 mt-1"><%= time_ago_in_words(notification.created_at) %> ago</p>
+        </div>
+        <% unless notification.read? %>
+          <%= button_to "Mark read", mark_as_read_notification_path(notification), method: :patch,
+                class: "text-xs text-indigo-600 hover:underline bg-transparent border-0 cursor-pointer shrink-0" %>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+<% end %>

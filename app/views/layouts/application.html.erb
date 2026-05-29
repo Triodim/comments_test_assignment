@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= content_for(:title) || "CommentApp" %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+    <%= yield :head %>
+    <link rel="icon" href="/icon.png" type="image/png">
+    <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
+    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+  </head>
+
+  <body class="bg-gray-50 min-h-screen">
+    <%# Navigation %>
+    <nav class="bg-white border-b border-gray-200 px-6 py-3 flex items-center justify-between">
+      <div class="flex items-center gap-6">
+        <%= link_to "CommentApp", root_path, class: "text-xl font-bold text-indigo-600" %>
+      </div>
+      <div class="flex items-center gap-4">
+        <% if user_signed_in? %>
+          <%= turbo_frame_tag "notification_badge" do %>
+            <%= render "shared/notification_badge" %>
+          <% end %>
+          <span class="text-sm text-gray-600"><%= current_user.username %></span>
+          <%= button_to "Sign out", destroy_user_session_path, method: :delete,
+                class: "text-sm text-gray-500 hover:text-red-600 bg-transparent border-0 cursor-pointer" %>
+        <% else %>
+          <%= link_to "Login", new_user_session_path,
+                class: "text-sm font-medium text-indigo-600 hover:text-indigo-800" %>
+          <%= link_to "Sign up", new_user_registration_path,
+                class: "text-sm font-medium bg-indigo-600 text-white px-3 py-1.5 rounded-md hover:bg-indigo-700" %>
+        <% end %>
+      </div>
+    </nav>
+
+    <%# Flash messages %>
+    <% if notice %>
+      <div class="bg-green-50 border-l-4 border-green-400 px-6 py-3 text-green-800 text-sm"><%= notice %></div>
+    <% end %>
+    <% if alert %>
+      <div class="bg-red-50 border-l-4 border-red-400 px-6 py-3 text-red-800 text-sm"><%= alert %></div>
+    <% end %>
+
+    <%# Two-column layout %>
+    <div class="max-w-6xl mx-auto px-6 py-8 flex gap-8">
+      <%# Sidebar %>
+      <aside class="w-56 shrink-0">
+        <%= render "shared/sidebar" %>
+      </aside>
+
+      <%# Main content %>
+      <main class="flex-1 min-w-0">
+        <%= yield %>
+      </main>
+    </div>
+  </body>
+</html>

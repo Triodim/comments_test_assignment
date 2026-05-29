@@ -1,0 +1,20 @@
+<% if @success %>
+  <% if @comment.root? %>
+    <%# Prepend new root comment to top of list %>
+    <%= turbo_stream.prepend "comments-list", partial: "comment", locals: { comment: @comment } %>
+    <%# Reset the new-comment form %>
+    <%= turbo_stream.replace "new-comment-form" do %>
+      <%= render "form", comment: Comment.new, url: comments_path %>
+    <% end %>
+  <% else %>
+    <%# Append reply into parent's children container %>
+    <%= turbo_stream.append "children-comment-#{@comment.parent_id}",
+          partial: "comment", locals: { comment: @comment } %>
+  <% end %>
+<% else %>
+  <%# Re-render form with errors %>
+  <%= turbo_stream.replace "new-comment-form" do %>
+    <div class="mb-2 text-sm text-red-600"><%= @comment.errors.full_messages.to_sentence %></div>
+    <%= render "form", comment: @comment, url: comments_path %>
+  <% end %>
+<% end %>
