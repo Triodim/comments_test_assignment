@@ -9,12 +9,12 @@
           <span class="text-xs text-gray-400"><%= time_ago_in_words(comment.created_at) %> ago</span>
         </div>
         <% if user_signed_in? && current_user == comment.user %>
-          <div class="flex gap-3">
+          <div class="flex items-center gap-3">
             <%= link_to "Edit", edit_comment_path(comment),
                   class: "text-xs text-indigo-600 hover:underline" %>
-            <%= button_to "Delete", comment_path(comment), method: :delete,
-                  data: { turbo_confirm: "Delete this comment and all its replies?" },
-                  class: "text-xs text-red-500 hover:underline bg-transparent border-0 cursor-pointer p-0" %>
+            <%= link_to "Delete", comment_path(comment),
+                  data: { turbo_method: :delete, turbo_confirm: "Delete this comment and all its replies?" },
+                  class: "text-xs text-red-500 hover:underline" %>
           </div>
         <% end %>
       </div>
@@ -24,7 +24,7 @@
 
       <%# Reply button (logged-in, not at max depth) %>
       <% if user_signed_in? && comment.depth < 2 %>
-        <div class="mt-3" data-controller="reply">
+        <div id="reply-form-comment-<%= comment.id %>" class="mt-3" data-controller="reply">
           <button data-action="reply#toggle"
                   class="text-xs text-indigo-600 hover:underline font-medium">Reply</button>
           <div data-reply-target="form" class="hidden mt-3">

@@ -9,7 +9,7 @@ Rails.application.routes.draw do
     registrations: 'users/registrations',
   }
 
-  resources :comments, only: %i[index create edit update destroy] do
+  resources :comments, only: %i[index show create edit update destroy] do
     collection do
       get :mine
     end

@@ -1,7 +1,10 @@
-<div class="bg-white rounded-lg border border-gray-200 p-4 max-w-2xl">
-  <h2 class="text-sm font-semibold text-gray-700 mb-3">Edit Comment</h2>
-  <%= render "form", comment: @comment, url: comment_path(@comment), submit_label: "Save Changes" %>
-  <div class="mt-2">
-    <%= link_to "Cancel", comments_path, class: "text-xs text-gray-500 hover:underline" %>
+<%= turbo_frame_tag "comment-#{@comment.id}" do %>
+  <div class="bg-white rounded-lg border border-indigo-300 p-4">
+    <h2 class="text-sm font-semibold text-gray-700 mb-3">Edit Comment</h2>
+    <%= render "form", comment: @comment, url: comment_path(@comment), submit_label: "Save Changes" %>
+    <div class="mt-2">
+      <%= link_to "Cancel", comment_path(@comment),
+            class: "text-xs text-gray-500 hover:underline" %>
+    </div>
   </div>
-</div>
+<% end %>

@@ -12,7 +12,7 @@ class Comment < ApplicationRecord
   validate  :max_depth_not_exceeded
 
   scope :roots_with_tree, -> {
-    roots.includes({ children: { children: :user } }, :user).order(created_at: :desc)
+    roots.includes(:user).order(created_at: :desc)
   }
 
   meilisearch do

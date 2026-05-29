@@ -10,6 +10,20 @@
     <%# Append reply into parent's children container %>
     <%= turbo_stream.append "children-comment-#{@comment.parent_id}",
           partial: "comment", locals: { comment: @comment } %>
+    <%# Reset and hide the reply form %>
+    <%= turbo_stream.replace "reply-form-comment-#{@comment.parent_id}" do %>
+      <div id="reply-form-comment-<%= @comment.parent_id %>" class="mt-3" data-controller="reply">
+        <button data-action="reply#toggle"
+                class="text-xs text-indigo-600 hover:underline font-medium">Reply</button>
+        <div data-reply-target="form" class="hidden mt-3">
+          <%= render "form",
+                comment: Comment.new,
+                url: comments_path,
+                parent_id: @comment.parent_id,
+                submit_label: "Post Reply" %>
+        </div>
+      </div>
+    <% end %>
   <% end %>
 <% else %>
   <%# Re-render form with errors %>

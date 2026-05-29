@@ -1,8 +1,9 @@
 <div class="flex items-center justify-between mb-6">
   <h1 class="text-lg font-semibold text-gray-900">Notifications</h1>
-  <% if @notifications.any?(&:read.is_a?(FalseClass)) || @notifications.unread.any? %>
-    <%= button_to "Mark all as read", mark_all_as_read_notifications_path, method: :patch,
-          class: "text-xs text-indigo-600 hover:underline bg-transparent border-0 cursor-pointer" %>
+  <% if @notifications.unread.any? %>
+    <%= link_to "Mark all as read", mark_all_as_read_notifications_path,
+          data: { turbo_method: :patch },
+          class: "text-xs text-indigo-600 hover:underline" %>
   <% end %>
 </div>
 
@@ -21,8 +22,9 @@
           <p class="text-xs text-gray-400 mt-1"><%= time_ago_in_words(notification.created_at) %> ago</p>
         </div>
         <% unless notification.read? %>
-          <%= button_to "Mark read", mark_as_read_notification_path(notification), method: :patch,
-                class: "text-xs text-indigo-600 hover:underline bg-transparent border-0 cursor-pointer shrink-0" %>
+          <%= link_to "Mark read", mark_as_read_notification_path(notification),
+                data: { turbo_method: :patch },
+                class: "text-xs text-indigo-600 hover:underline shrink-0" %>
         <% end %>
       </div>
     <% end %>

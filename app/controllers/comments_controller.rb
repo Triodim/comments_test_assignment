@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 class CommentsController < ApplicationController
-  before_action :authenticate_user!, except: [:index]
-  before_action :set_comment,        only: %i[edit update destroy]
+  before_action :authenticate_user!, except: %i[index show]
+  before_action :set_comment,        only: %i[show edit update destroy]
   before_action :require_ownership,  only: %i[edit update destroy]
 
   def index
@@ -26,8 +26,13 @@ class CommentsController < ApplicationController
     )
     @comment = result.comment
     @success = result.success?
-    respond_to { |f| f.turbo_stream }
+    respond_to do |f|
+      f.turbo_stream
+      f.html { redirect_to comments_path }
+    end
   end
+
+  def show; end
 
   def edit; end
 
@@ -35,12 +40,18 @@ class CommentsController < ApplicationController
     result = Comments::Update.call(comment: @comment, params: comment_params)
     @comment = result.comment
     @success = result.success?
-    respond_to { |f| f.turbo_stream }
+    respond_to do |f|
+      f.turbo_stream
+      f.html { redirect_to comments_path }
+    end
   end
 
   def destroy
     Comments::Destroy.call(comment: @comment)
-    respond_to { |f| f.turbo_stream }
+    respond_to do |f|
+      f.turbo_stream
+      f.html { redirect_to comments_path }
+    end
   end
 
   private

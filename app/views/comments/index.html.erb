@@ -1,35 +1,37 @@
-<%# Search bar %>
-<form action="<%= comments_path %>" method="get" class="mb-6">
-  <div class="flex gap-2">
-    <input type="text" name="q" value="<%= params[:q] %>"
-           placeholder="Search comments..."
-           class="flex-1 rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
-    <button type="submit"
-            class="bg-indigo-600 text-white px-4 py-2 rounded-md text-sm hover:bg-indigo-700">Search</button>
-    <% if params[:q].present? %>
-      <%= link_to "Clear", comments_path, class: "px-4 py-2 text-sm text-gray-500 hover:text-gray-700" %>
-    <% end %>
-  </div>
-</form>
+<% content_for :main_class, "flex flex-col overflow-hidden" %>
 
-<% if user_signed_in? %>
-  <%# New comment form %>
-  <div class="bg-white rounded-lg border border-gray-200 p-4 mb-6">
-    <h2 class="text-sm font-semibold text-gray-700 mb-3">New Comment</h2>
-    <%= render "form", comment: @new_comment, url: comments_path %>
-  </div>
-<% else %>
-  <div class="bg-indigo-50 border border-indigo-200 rounded-lg p-4 mb-6 text-sm text-indigo-700">
-    <%= link_to "Sign in", new_user_session_path, class: "font-semibold underline" %> or
-    <%= link_to "sign up", new_user_registration_path, class: "font-semibold underline" %>
-    to post comments and see full threads.
-  </div>
-<% end %>
+<%# Fixed header: search + new comment form %>
+<div class="shrink-0 pb-4">
+  <form action="<%= comments_path %>" method="get" class="mb-4">
+    <div class="flex gap-2">
+      <input type="text" name="q" value="<%= params[:q] %>"
+             placeholder="Search comments..."
+             class="flex-1 rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+      <button type="submit"
+              class="bg-indigo-600 text-white px-4 py-2 rounded-md text-sm hover:bg-indigo-700">Search</button>
+      <% if params[:q].present? %>
+        <%= link_to "Clear", comments_path, class: "px-4 py-2 text-sm text-gray-500 hover:text-gray-700" %>
+      <% end %>
+    </div>
+  </form>
 
-<%# Comments list %>
-<div id="comments-list" class="flex flex-col gap-4">
+  <% if user_signed_in? %>
+    <div id="new-comment-form" class="bg-white rounded-lg border border-gray-200 p-4">
+      <h2 class="text-sm font-semibold text-gray-700 mb-3">New Comment</h2>
+      <%= render "form", comment: @new_comment, url: comments_path %>
+    </div>
+  <% else %>
+    <div class="bg-indigo-50 border border-indigo-200 rounded-lg p-4 text-sm text-indigo-700">
+      <%= link_to "Sign in", new_user_session_path, class: "font-semibold underline" %> or
+      <%= link_to "sign up", new_user_registration_path, class: "font-semibold underline" %>
+      to post comments and see full threads.
+    </div>
+  <% end %>
+</div>
+
+<%# Scrollable comments feed only %>
+<div id="comments-list" class="flex-1 overflow-y-auto flex flex-col gap-4 pr-1">
   <% if params[:q].present? %>
-    <%# Flat search results %>
     <% if @comments.empty? %>
       <p class="text-gray-500 text-sm">No results for "<%= params[:q] %>".</p>
     <% else %>
@@ -38,7 +40,6 @@
       <% end %>
     <% end %>
   <% else %>
-    <%# Full tree %>
     <% if @comments.empty? %>
       <p class="text-gray-500 text-sm">No comments yet. Be the first!</p>
     <% else %>

@@ -10,13 +10,19 @@ class NotificationsController < ApplicationController
 
   def mark_as_read
     Notifications::MarkAsRead.call(notification: @notification)
-    respond_to { |f| f.turbo_stream }
+    respond_to do |f|
+      f.turbo_stream
+      f.html { redirect_to notifications_path }
+    end
   end
 
   def mark_all_as_read
     Notifications::MarkAllAsRead.call(user: current_user)
     @notifications = current_user.notifications.recent.includes(:actor, :comment)
-    respond_to { |f| f.turbo_stream }
+    respond_to do |f|
+      f.turbo_stream
+      f.html { redirect_to notifications_path }
+    end
   end
 
   private
