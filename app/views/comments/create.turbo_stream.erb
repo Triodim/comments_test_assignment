@@ -1,34 +1,32 @@
 <% if @success %>
   <% if @comment.root? %>
     <%# Prepend new root comment to top of list %>
-    <%= turbo_stream.prepend "comments-list", partial: "comment", locals: { comment: @comment } %>
+    <%= turbo_stream.prepend "comments-list" do %>
+      <%= render(CommentComponent.new(comment: @comment, current_user: current_user)) %>
+    <% end %>
     <%# Reset the new-comment form %>
     <%= turbo_stream.replace "new-comment-form" do %>
-      <%= render "form", comment: Comment.new, url: comments_path %>
+      <div id="new-comment-form" class="bg-white rounded-lg border border-gray-200 p-4">
+        <h2 class="text-sm font-semibold text-gray-700 mb-3">New Comment</h2>
+        <%= render(CommentFormComponent.new(comment: Comment.new, url: comments_path)) %>
+      </div>
     <% end %>
   <% else %>
     <%# Append reply into parent's children container %>
-    <%= turbo_stream.append "children-comment-#{@comment.parent_id}",
-          partial: "comment", locals: { comment: @comment } %>
+    <%= turbo_stream.append "children-comment-#{@comment.parent_id}" do %>
+      <%= render(CommentComponent.new(comment: @comment, current_user: current_user)) %>
+    <% end %>
     <%# Reset and hide the reply form %>
     <%= turbo_stream.replace "reply-form-comment-#{@comment.parent_id}" do %>
-      <div id="reply-form-comment-<%= @comment.parent_id %>" class="mt-3" data-controller="reply">
-        <button data-action="reply#toggle"
-                class="text-xs text-indigo-600 hover:underline font-medium">Reply</button>
-        <div data-reply-target="form" class="hidden mt-3">
-          <%= render "form",
-                comment: Comment.new,
-                url: comments_path,
-                parent_id: @comment.parent_id,
-                submit_label: "Post Reply" %>
-        </div>
-      </div>
+      <%= render(ReplyFormComponent.new(parent_comment: @comment.parent)) %>
     <% end %>
   <% end %>
 <% else %>
   <%# Re-render form with errors %>
   <%= turbo_stream.replace "new-comment-form" do %>
-    <div class="mb-2 text-sm text-red-600"><%= @comment.errors.full_messages.to_sentence %></div>
-    <%= render "form", comment: @comment, url: comments_path %>
+    <div id="new-comment-form" class="bg-white rounded-lg border border-gray-200 p-4">
+      <div class="mb-2 text-sm text-red-600"><%= @comment.errors.full_messages.to_sentence %></div>
+      <%= render(CommentFormComponent.new(comment: @comment, url: comments_path)) %>
+    </div>
   <% end %>
 <% end %>

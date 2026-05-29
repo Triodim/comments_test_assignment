@@ -18,7 +18,7 @@
   <% if user_signed_in? %>
     <div id="new-comment-form" class="bg-white rounded-lg border border-gray-200 p-4">
       <h2 class="text-sm font-semibold text-gray-700 mb-3">New Comment</h2>
-      <%= render "form", comment: @new_comment, url: comments_path %>
+      <%= render(CommentFormComponent.new(comment: @new_comment, url: comments_path)) %>
     </div>
   <% else %>
     <div class="bg-indigo-50 border border-indigo-200 rounded-lg p-4 text-sm text-indigo-700">
@@ -36,7 +36,7 @@
       <p class="text-gray-500 text-sm">No results for "<%= params[:q] %>".</p>
     <% else %>
       <% @comments.each do |comment| %>
-        <%= render "comment", comment: comment, search_result: true %>
+        <%= render(CommentComponent.new(comment: comment, current_user: current_user)) %>
       <% end %>
     <% end %>
   <% else %>
@@ -44,7 +44,7 @@
       <p class="text-gray-500 text-sm">No comments yet. Be the first!</p>
     <% else %>
       <% @comments.each do |comment| %>
-        <%= render "comment", comment: comment %>
+        <%= render(CommentComponent.new(comment: comment, current_user: current_user)) %>
       <% end %>
     <% end %>
   <% end %>

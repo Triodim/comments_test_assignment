@@ -1,18 +1,9 @@
 <%# Update the notification row styling %>
 <%= turbo_stream.replace "notification-#{@notification.id}" do %>
-  <div id="notification-<%= @notification.id %>"
-       class="bg-white rounded-lg border border-gray-200 p-4 flex items-center justify-between gap-4">
-    <div class="flex-1">
-      <%= link_to comments_path(anchor: "comment-#{@notification.comment_id}"),
-            class: "text-sm text-gray-600 hover:underline" do %>
-        <strong><%= @notification.actor.username %></strong> mentioned you in a comment
-      <% end %>
-      <p class="text-xs text-gray-400 mt-1"><%= time_ago_in_words(@notification.created_at) %> ago</p>
-    </div>
-  </div>
+  <%= render(NotificationRowComponent.new(notification: @notification)) %>
 <% end %>
 
 <%# Update bell badge count %>
 <%= turbo_stream.replace "notification_badge" do %>
-  <%= render "shared/notification_badge" %>
+  <%= render(NotificationBadgeComponent.new(current_user: current_user)) %>
 <% end %>

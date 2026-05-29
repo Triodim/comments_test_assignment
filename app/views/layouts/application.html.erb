@@ -21,7 +21,7 @@
       <div class="flex items-center gap-4">
         <% if user_signed_in? %>
           <%= turbo_frame_tag "notification_badge" do %>
-            <%= render "shared/notification_badge" %>
+            <%= render(NotificationBadgeComponent.new(current_user: current_user)) %>
           <% end %>
           <span class="text-sm text-gray-600"><%= current_user.username %></span>
           <%= link_to "Sign out", destroy_user_session_path,
@@ -48,7 +48,7 @@
     <div class="flex-1 overflow-hidden flex gap-8 max-w-6xl w-full mx-auto px-6 py-6">
       <%# Sidebar — fixed, no scroll needed %>
       <aside class="w-56 shrink-0">
-        <%= render "shared/sidebar" %>
+        <%= render(SidebarComponent.new(current_user: current_user)) %>
       </aside>
 
       <%# Main content — scrolls independently (pages can override via content_for :main_class) %>

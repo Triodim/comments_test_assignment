@@ -1,11 +1,13 @@
 <% if @success %>
-  <%= turbo_stream.replace "comment-#{@comment.id}", partial: "comment", locals: { comment: @comment } %>
+  <%= turbo_stream.replace "comment-#{@comment.id}" do %>
+    <%= render(CommentComponent.new(comment: @comment, current_user: current_user)) %>
+  <% end %>
 <% else %>
   <%= turbo_stream.replace "comment-#{@comment.id}" do %>
     <%= turbo_frame_tag "comment-#{@comment.id}" do %>
       <div class="bg-white rounded-lg border border-red-300 p-4">
         <div class="text-sm text-red-600 mb-3"><%= @comment.errors.full_messages.to_sentence %></div>
-        <%= render "form", comment: @comment, url: comment_path(@comment), submit_label: "Save Changes" %>
+        <%= render(CommentFormComponent.new(comment: @comment, url: comment_path(@comment), submit_label: 'Save Changes')) %>
         <%= link_to "Cancel", comments_path, class: "text-xs text-gray-500 hover:underline mt-2 block" %>
       </div>
     <% end %>

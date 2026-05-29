@@ -1,5 +1,5 @@
-<%= form_with model: comment, url: url, data: { turbo: true } do |f| %>
-  <%= f.hidden_field :parent_id, value: local_assigns[:parent_id] %>
+<%= form_with model: @comment, url: @url, data: { turbo: true } do |f| %>
+  <%= f.hidden_field :parent_id, value: @parent_id %>
   <div class="mb-3">
     <%= f.text_area :body,
           rows: 3,
@@ -7,7 +7,7 @@
           class: "w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:border-indigo-500 resize-none" %>
   </div>
   <div class="flex justify-end">
-    <%= f.submit local_assigns.fetch(:submit_label, "Post Comment"),
+    <%= f.submit @submit_label,
           class: "bg-indigo-600 text-white px-4 py-1.5 rounded-md text-sm hover:bg-indigo-700 cursor-pointer" %>
   </div>
 <% end %>
