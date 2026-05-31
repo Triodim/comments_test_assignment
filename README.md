@@ -181,6 +181,12 @@ docker compose run --rm app bundle exec rake db:seed:generate
 
 ## Running Tests
 
+Before the first run, create and migrate the test database:
+
+```bash
+docker compose run --rm -e RAILS_ENV=test app bundle exec rails db:create db:migrate
+```
+
 ```bash
 # All specs
 docker compose run --rm -e RAILS_ENV=test app bundle exec rspec
@@ -231,3 +237,16 @@ spec/
   requests/         # HTTP contract specs
   system/           # Capybara end-to-end specs
 ```
+
+---
+
+## Possible Further Improvements
+
+1. **Infinite scroll for "My Comments" and Notifications** — apply the same cursor-based pagination used on the main feed so both pages stay fast at scale.
+2. **User roles** — add an `admin / moderator / user` role enum to allow moderators to manage any comment and admins to manage users.
+3. **Production readiness** — production Docker target with forced SSL, proper secret management, and a health-check endpoint.
+4. **Frontend tests** — JavaScript unit tests (Vitest) for Stimulus controllers and Playwright end-to-end tests for live search and infinite scroll.
+5. **Styled deletion confirmation** — replace the browser-native confirm dialog with a custom modal component.
+6. **Auto-mark notifications as read** — mark a notification as read automatically when the linked comment scrolls into view.
+7. **Two-factor authentication** — add TOTP-based 2FA (e.g. via `devise-two-factor`) for an extra layer of account security.
+8. **Admin panel** — a protected dashboard for managing users and moderators, viewing site-wide stats (comment counts, active users, notification volume), and performing moderation actions.
