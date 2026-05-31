@@ -15,6 +15,9 @@ gem 'bootsnap', require: false
 # Auth
 gem 'devise'
 
+# View components
+gem 'view_component'
+
 # Comment tree structure
 gem 'ancestry'
 

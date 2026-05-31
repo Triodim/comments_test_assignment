@@ -18,7 +18,7 @@
   <% if user_signed_in? %>
     <div id="new-comment-form" class="bg-white rounded-lg border border-gray-200 p-4">
       <h2 class="text-sm font-semibold text-gray-700 mb-3">New Comment</h2>
-      <%= render "form", comment: @new_comment, url: comments_path %>
+      <%= render(CommentFormComponent.new(comment: @new_comment, url: comments_path)) %>
     </div>
   <% else %>
     <div class="bg-indigo-50 border border-indigo-200 rounded-lg p-4 text-sm text-indigo-700">
@@ -29,14 +29,23 @@
   <% end %>
 </div>
 
-<%# Scrollable comments feed only %>
+<% if user_signed_in? %>
+  <div data-controller="feed" class="shrink-0 flex items-center justify-end gap-3 pb-2">
+    <button data-action="feed#expandAll"
+            class="text-xs text-gray-400 hover:text-gray-600 hover:underline">Expand all</button>
+    <button data-action="feed#collapseAll"
+            class="text-xs text-gray-400 hover:text-gray-600 hover:underline">Collapse all</button>
+  </div>
+<% end %>
+
+<%# Scrollable comments feed %>
 <div id="comments-list" class="flex-1 overflow-y-auto flex flex-col gap-4 pr-1">
   <% if params[:q].present? %>
     <% if @comments.empty? %>
       <p class="text-gray-500 text-sm">No results for "<%= params[:q] %>".</p>
     <% else %>
       <% @comments.each do |comment| %>
-        <%= render "comment", comment: comment, search_result: true %>
+        <%= render(CommentComponent.new(comment: comment, current_user: current_user, children_map: @children_map)) %>
       <% end %>
     <% end %>
   <% else %>
@@ -44,8 +53,18 @@
       <p class="text-gray-500 text-sm">No comments yet. Be the first!</p>
     <% else %>
       <% @comments.each do |comment| %>
-        <%= render "comment", comment: comment %>
+        <%= render(CommentComponent.new(comment: comment, current_user: current_user, children_map: @children_map)) %>
       <% end %>
+    <% end %>
+
+    <%# Infinite scroll sentinel — replaced with next cursor or removed on last page %>
+    <% if @next_cursor %>
+      <div id="feed-sentinel"
+           data-controller="infinite-scroll"
+           data-infinite-scroll-url-value="<%= comments_path(cursor: @next_cursor, format: :turbo_stream) %>"
+           class="py-6 flex justify-center">
+        <span class="text-xs text-gray-300">Loading more…</span>
+      </div>
     <% end %>
   <% end %>
 </div>

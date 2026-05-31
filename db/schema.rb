@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_29_120137) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_30_000001) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -20,6 +20,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_29_120137) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
+    t.index ["ancestry", "created_at", "id"], name: "index_comments_on_ancestry_created_at_id", order: { created_at: :desc, id: :desc }
     t.index ["ancestry"], name: "index_comments_on_ancestry"
     t.index ["user_id"], name: "index_comments_on_user_id"
   end
