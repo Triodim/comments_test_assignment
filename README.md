@@ -115,7 +115,13 @@ Seeds create realistic users, threaded comments, and mention-based notifications
 docker compose run --rm app bundle exec rails db:seed
 ```
 
-All seeded user passwords are `password123`.
+One test account is always created with known credentials:
+
+| Email | Password |
+|---|---|
+| `tester@example.com` | `password123` |
+
+The test account is guaranteed to have unread notifications waiting on first login.
 
 ---
 
@@ -129,21 +135,34 @@ docker compose run --rm app bundle exec rake "db:seed:generate[users,comments_pe
 
 | Parameter | Description | Default |
 |---|---|---|
-| `users` | Number of users to create | 10 |
+| `users` | Number of random users to create (+ 2 reviewer accounts always added) | 10 |
 | `comments_per_user` | Root comments each user writes | 5 |
 | `mentions_per_user` | Times each user mentions other users across their comments | 3 |
 | `subcomments_per_user` | Depth-1 replies each user makes on other users' root comments | 4 |
 
-**Example — generate 100k+ comments:**
+**Reviewer accounts**
+
+Two accounts are always created regardless of the `users` parameter. Use these to log in immediately after seeding:
+
+| Email | Password |
+|---|---|
+| `alice@example.com` | `password123` |
+| `bob@example.com` | `password123` |
+
+Open alice and bob in two separate browser windows (or normal + incognito) to test real-time notifications: post a comment as alice mentioning `@bob`, then check bob's bell badge update live.
+
+**Example — generate ~30k comments:**
 
 ```bash
 docker compose run --rm app bundle exec rake "db:seed:generate[200,100,5,50]"
-# 200 users × (100 root + 50 subcomments) = 30 000 comments, 1 000 notifications
+# 202 users × (100 root + 50 subcomments) ≈ 30 000 comments
 ```
+
+**Example — generate ~100k comments:**
 
 ```bash
 docker compose run --rm app bundle exec rake "db:seed:generate[500,100,5,100]"
-# 500 users × (100 root + 100 subcomments) = 100 000 comments
+# 502 users × (100 root + 100 subcomments) ≈ 100 000 comments
 ```
 
 **What to check after seeding:**
