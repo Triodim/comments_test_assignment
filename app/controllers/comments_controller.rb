@@ -6,8 +6,8 @@ class CommentsController < ApplicationController
   before_action :require_ownership,  only: %i[edit update destroy]
 
   def index
-    if params[:q].present?
-      @search_query = params[:q]
+    @search_query = params[:q].presence
+    if @search_query
       @comments     = Comment.search(@search_query)
       @children_map = {}
       @next_cursor  = nil
@@ -86,41 +86,48 @@ class CommentsController < ApplicationController
   end
 
   def load_feed_for_scroll_to
-    target = Comment.find_by(id: params[:scroll_to])
+    scroll_to_param = params[:scroll_to]
+    target = Comment.find_by(id: scroll_to_param)
+
     unless target
-      # Fall back to normal first page if comment not found
-      batch         = Comment.feed_page(cursor: nil)
-      @comments     = batch.first(Comment::FEED_LIMIT)
-      @children_map = build_children_map(@comments)
-      @next_cursor  = nil
+      first_page
       return
     end
 
-    target_root = target.root
+    target_root    = target.root
+    target_root_id = target_root.id
+    first_batch    = Comment.feed_page(cursor: nil).to_a
 
-    # Check if target root is already in the standard first page
-    standard_batch = Comment.feed_page(cursor: nil).to_a
-    if standard_batch.any? { |c| c.id == target_root.id }
-      @comments = standard_batch.first(Comment::FEED_LIMIT)
+    @comments = if first_batch.any? { |c| c.id == target_root_id }
+      first_batch.first(Comment::FEED_LIMIT)
     else
-      # Load up to FEED_LIMIT-1 roots newer than target_root, then append it
       newer = Comment.roots
                      .includes(:user)
                      .where(
                        '(created_at > :ts) OR (created_at = :ts AND id > :id)',
-                       ts: target_root.created_at, id: target_root.id,
+                       ts: target_root.created_at, id: target_root_id,
                      )
                      .order(created_at: :desc, id: :desc)
                      .limit(Comment::FEED_LIMIT - 1)
                      .to_a
-      target_root = Comment.includes(:user).find(target_root.id)
-      @comments = (newer + [target_root]).sort_by { |c| [-c.created_at.to_f, -c.id] }
+      target_root = Comment.includes(:user).find(target_root_id)
+      sort_feed_desc(newer + [target_root])
     end
 
     @children_map = build_children_map(@comments)
-    # Always enable infinite scroll from the last loaded root onward
     @next_cursor  = @comments.any? ? Comment.encode_cursor(@comments.last) : nil
-    @scroll_to_id = params[:scroll_to].to_s
+    @scroll_to_id = scroll_to_param.to_s
+  end
+
+  def first_page
+    batch         = Comment.feed_page(cursor: nil)
+    @comments     = batch.first(Comment::FEED_LIMIT)
+    @children_map = build_children_map(@comments)
+    @next_cursor  = nil
+  end
+
+  def sort_feed_desc(comments)
+    comments.sort_by { |comment| [-comment.created_at.to_f, -comment.id] }
   end
 
   def build_children_map(comments)

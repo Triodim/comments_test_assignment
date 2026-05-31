@@ -44,7 +44,7 @@ class SeedDataGenerator
 
   # ── Step 1: named reviewer accounts ───────────────────────────────────────
   def create_reviewer_users
-    log "Creating reviewer accounts…"
+    log 'Creating reviewer accounts…'
     users = REVIEWER_ACCOUNTS.map do |attrs|
       User.find_or_create_by!(username: attrs[:username]) do |u|
         u.email    = attrs[:email]
@@ -167,7 +167,7 @@ class SeedDataGenerator
   # Ensures alice and bob always have unread notifications waiting when they
   # first log in, regardless of how the random mention distribution fell.
   def guarantee_reviewer_notifications
-    log "Guaranteeing notifications for reviewer accounts…"
+    log 'Guaranteeing notifications for reviewer accounts…'
     all_comments = @root_comments + @subcomments
     count        = 0
 
@@ -197,9 +197,9 @@ class SeedDataGenerator
 
   # ── Step 7: Meilisearch bulk reindex ──────────────────────────────────────
   def reindex_meilisearch
-    log "Triggering Meilisearch reindex…"
+    log 'Triggering Meilisearch reindex…'
     Comment.ms_reindex!
-    log "  ✓ Reindex queued (processed by Sidekiq)"
+    log '  ✓ Reindex queued (processed by Sidekiq)'
   rescue StandardError => e
     log "  ⚠ Meilisearch reindex failed: #{e.message}"
   end
@@ -207,24 +207,24 @@ class SeedDataGenerator
   # ── Summary ────────────────────────────────────────────────────────────────
   def print_summary
     puts
-    puts "┌─────────────────────────────────────────────────────────┐"
-    puts "│  Seed complete                                          │"
-    puts "├─────────────────────────────────────────────────────────┤"
+    puts '┌─────────────────────────────────────────────────────────┐'
+    puts '│  Seed complete                                          │'
+    puts '├─────────────────────────────────────────────────────────┤'
     puts "│  Users (total)  #{User.count.to_s.ljust(40)} │"
     puts "│  Root comments  #{@root_comments.size.to_s.ljust(40)} │"
     puts "│  Subcomments    #{@subcomments.size.to_s.ljust(40)} │"
     puts "│  Notifications  #{Notification.count.to_s.ljust(40)} │"
-    puts "├─────────────────────────────────────────────────────────┤"
-    puts "│  Reviewer accounts — use these to log in and test:     │"
-    puts "│                                                         │"
+    puts '├─────────────────────────────────────────────────────────┤'
+    puts '│  Reviewer accounts — use these to log in and test:     │'
+    puts '│                                                         │'
     REVIEWER_ACCOUNTS.each do |a|
       line = "  #{a[:email].ljust(28)}  #{a[:password]}"
       puts "│  #{line.ljust(55)} │"
     end
-    puts "│                                                         │"
-    puts "│  Tip: open alice and bob in two separate browsers to   │"
-    puts "│  test mentions and real-time notifications.             │"
-    puts "└─────────────────────────────────────────────────────────┘"
+    puts '│                                                         │'
+    puts '│  Tip: open alice and bob in two separate browsers to   │'
+    puts '│  test mentions and real-time notifications.             │'
+    puts '└─────────────────────────────────────────────────────────┘'
     puts
   end
 
@@ -256,14 +256,13 @@ namespace :db do
     DESC
     task :generate,
          %i[users_count comments_per_user mentions_per_user subcomments_per_user] => :environment do |_t, args|
-
       users_count          = (args[:users_count]          || 10).to_i
       comments_per_user    = (args[:comments_per_user]    ||  5).to_i
       mentions_per_user    = (args[:mentions_per_user]    ||  3).to_i
       subcomments_per_user = (args[:subcomments_per_user] ||  4).to_i
 
       puts
-      puts "Parameters:"
+      puts 'Parameters:'
       puts "  users_count:          #{users_count} random + 2 reviewer accounts"
       puts "  comments_per_user:    #{comments_per_user}"
       puts "  mentions_per_user:    #{mentions_per_user}"

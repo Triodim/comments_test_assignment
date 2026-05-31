@@ -1,8 +1,17 @@
 # Omakase Ruby styling for Rails
 inherit_gem: { rubocop-rails-omakase: rubocop.yml }
 
-# Overwrite or add rules to create your own house style
-#
-# # Use `[a, [b, c]]` not `[ a, [ b, c ] ]`
-# Layout/SpaceInsideArrayLiteralBrackets:
-#   Enabled: false
+# Project uses single-quoted strings (frozen_string_literal means no perf difference)
+Style/StringLiterals:
+  EnforcedStyle: single_quotes
+
+# Project uses trailing commas in multi-line collections (makes diffs cleaner)
+Style/TrailingCommaInArrayLiteral:
+  EnforcedStyleForMultiline: comma
+
+Style/TrailingCommaInHashLiteral:
+  EnforcedStyleForMultiline: comma
+
+# %i[] / %w[] without interior spaces is the dominant Rails convention
+Layout/SpaceInsideArrayLiteralBrackets:
+  Enabled: false

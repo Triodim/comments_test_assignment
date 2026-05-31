@@ -11,11 +11,7 @@ class MentionNotifier
   end
 
   def call
-    if @previous_body.nil?
-      create_notifications(mentioned_users(@comment.body))
-    else
-      sync_notifications
-    end
+    @previous_body ? sync_notifications : create_notifications(mentioned_users(@comment.body))
   end
 
   private
