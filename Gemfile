@@ -34,6 +34,8 @@ group :development, :test do
   gem 'debug', platforms: %i[mri windows], require: 'debug/prelude'
   gem 'brakeman', require: false
   gem 'rubocop-rails-omakase', require: false
+  gem 'bundler-audit', require: false
+  gem 'reek', require: false
   gem 'rspec-rails'
   gem 'factory_bot_rails'
   gem 'faker'

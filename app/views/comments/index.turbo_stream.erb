@@ -1,20 +1,35 @@
-<%# Insert each new comment immediately before the sentinel, keeping sentinel at bottom %>
-<% @comments.each do |comment| %>
-  <%= turbo_stream.before "feed-sentinel" do %>
-    <%= render(CommentComponent.new(comment: comment, current_user: current_user, children_map: @children_map)) %>
-  <% end %>
-<% end %>
-
-<%# Update sentinel with new cursor, or remove it on the last page %>
-<% if @next_cursor %>
-  <%= turbo_stream.replace "feed-sentinel" do %>
-    <div id="feed-sentinel"
-         data-controller="infinite-scroll"
-         data-infinite-scroll-url-value="<%= comments_path(cursor: @next_cursor, format: :turbo_stream) %>"
-         class="py-6 flex justify-center">
-      <span class="text-xs text-gray-300">Loading more…</span>
+<% if @search_query %>
+  <%# ── Search result: replace the entire feed ──────────────────────────── %>
+  <%= turbo_stream.replace "comments-list" do %>
+    <div id="comments-list" class="flex-1 overflow-y-auto flex flex-col gap-4 pr-1">
+      <% if @comments.empty? %>
+        <p class="text-gray-500 text-sm">No results for "<%= html_escape(@search_query) %>".</p>
+      <% else %>
+        <% @comments.each do |comment| %>
+          <%= render(CommentComponent.new(comment: comment, current_user: current_user, children_map: @children_map)) %>
+        <% end %>
+      <% end %>
     </div>
   <% end %>
 <% else %>
-  <%= turbo_stream.remove "feed-sentinel" %>
+  <%# ── Infinite scroll: insert each comment before sentinel ────────────── %>
+  <% @comments.each do |comment| %>
+    <%= turbo_stream.before "feed-sentinel" do %>
+      <%= render(CommentComponent.new(comment: comment, current_user: current_user, children_map: @children_map)) %>
+    <% end %>
+  <% end %>
+
+  <%# Update sentinel with new cursor, or remove it on the last page %>
+  <% if @next_cursor %>
+    <%= turbo_stream.replace "feed-sentinel" do %>
+      <div id="feed-sentinel"
+           data-controller="infinite-scroll"
+           data-infinite-scroll-url-value="<%= comments_path(cursor: @next_cursor, format: :turbo_stream) %>"
+           class="py-6 flex justify-center">
+        <span class="text-xs text-gray-300">Loading more…</span>
+      </div>
+    <% end %>
+  <% else %>
+    <%= turbo_stream.remove "feed-sentinel" %>
+  <% end %>
 <% end %>
