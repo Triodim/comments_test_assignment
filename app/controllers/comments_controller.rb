@@ -7,7 +7,8 @@ class CommentsController < ApplicationController
 
   def index
     if params[:q].present?
-      @comments     = Comment.search(params[:q])
+      @search_query = params[:q]
+      @comments     = Comment.search(@search_query)
       @children_map = {}
       @next_cursor  = nil
     elsif params[:scroll_to].present?
