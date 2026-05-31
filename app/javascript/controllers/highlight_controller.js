@@ -2,12 +2,24 @@ import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
   connect() {
-    if (window.location.hash === `#${this.element.id}`) {
-      requestAnimationFrame(() => {
-        this.element.scrollIntoView({ behavior: 'instant', block: 'start' })
+    const scrollToId = document.body.dataset.scrollTo
+    if (scrollToId && this.element.id === `comment-${scrollToId}`) {
+      // Small delay lets the flex layout fully settle before we measure positions
+      setTimeout(() => {
+        this.#scrollIntoContainer()
         this.#flash()
-      })
+      }, 50)
     }
+  }
+
+  #scrollIntoContainer() {
+    const container = document.getElementById('comments-list')
+    if (!container) return
+
+    // Compute absolute offset of element within the scroll container
+    const elementRect   = this.element.getBoundingClientRect()
+    const containerRect = container.getBoundingClientRect()
+    container.scrollTop += elementRect.top - containerRect.top
   }
 
   #flash() {

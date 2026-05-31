@@ -1,6 +1,6 @@
 <div id="notification-<%= @notification.id %>" class="<%= row_class %>">
   <div class="flex-1">
-    <%= link_to comments_path(anchor: "comment-#{@notification.comment_id}"),
+    <%= link_to comments_path(scroll_to: @notification.comment_id),
           class: link_class do %>
       <strong><%= @notification.actor.username %></strong> mentioned you in a comment
     <% end %>
