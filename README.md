@@ -248,5 +248,7 @@ spec/
 4. **Frontend tests** — JavaScript unit tests (Vitest) for Stimulus controllers and Playwright end-to-end tests for live search and infinite scroll.
 5. **Styled deletion confirmation** — replace the browser-native confirm dialog with a custom modal component.
 6. **Auto-mark notifications as read** — mark a notification as read automatically when the linked comment scrolls into view.
-7. **Two-factor authentication** — add TOTP-based 2FA (e.g. via `devise-two-factor`) for an extra layer of account security.
-8. **Admin panel** — a protected dashboard for managing users and moderators, viewing site-wide stats (comment counts, active users, notification volume), and performing moderation actions.
+7. **Two-factor authentication** — TOTP-based 2FA for an extra layer of account security.
+8. **Admin panel** — protected dashboard for managing users, moderators, and viewing site-wide stats.
+9. **Mobile-responsive UI** — adapt the layout and forms to work comfortably on small screens.
+10. **Comment validation** — enforce length limits, reject blank-only input, and validate `@mention` format.
